@@ -11,8 +11,7 @@ const corsConfig = defineConfig({
   origin: [
     'http://localhost:3000',
     'https://brokoli-football.vercel.app',
-    '*.railway.app',
-    '*.vercel.app'
+    'https://brokoli-football-production.up.railway.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   headers: true,
