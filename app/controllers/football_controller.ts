@@ -102,8 +102,8 @@ export default class FootballController {
         return response.badRequest({ error: 'Invalid match data structure' })
       }
       
-      const homeTeamId = matchData.homeTeam.id
-      const awayTeamId = matchData.awayTeam.id
+      // const homeTeamId = matchData.homeTeam.id
+      // const awayTeamId = matchData.awayTeam.id
       
       // Get head-to-head data
       const h2hUrl = `${this.footballDataUrl}/matches/${matchId}/head2head`
