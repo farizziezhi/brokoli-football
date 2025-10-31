@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3333/api';
+const API_BASE_URL = 'https://brokoli-football-production.up.railway.app/api';
 
 // DOM Elements
 const standingsTab = document.getElementById('standingsTab');
