@@ -15,7 +15,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
   PORT: Env.schema.number(),
   APP_KEY: Env.schema.string(),
-  HOST: Env.schema.string({ format: 'host' }),
+  HOST: Env.schema.string({ format: 'host' }).optional(),
   LOG_LEVEL: Env.schema.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']),
   FOOTBALL_API_KEY: Env.schema.string(),
   FOOTBALL_DATA_API_KEY: Env.schema.string.optional(),

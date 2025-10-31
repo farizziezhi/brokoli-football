@@ -19,6 +19,12 @@ export const http = defineConfig({
   generateRequestId: true,
   allowMethodSpoofing: false,
   trustProxy: true,
+  
+  /**
+   * Server configuration
+   */
+  host: env.get('HOST', '0.0.0.0'),
+  port: env.get('PORT', 3333),
 
   /**
    * Enabling async local storage will let you access HTTP context

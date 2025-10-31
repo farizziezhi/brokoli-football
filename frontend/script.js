@@ -1,4 +1,4 @@
-const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3333/api' : 'https://brokoli-football-backend.vercel.app/api';
+const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3333/api' : 'https://brokoli-football-production.up.railway.app/api';
 
 // DOM Elements
 const standingsTab = document.getElementById('standingsTab');
