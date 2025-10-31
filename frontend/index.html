@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brokoli Football - Professional Football Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#10b981',
+                        secondary: '#059669',
+                        accent: '#6366f1'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'bounce-in': 'bounceIn 0.8s ease-out'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-futbol text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                            Brokoli Football
+                        </h1>
+                        <p class="text-sm text-gray-500">Professional Football Analytics</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <div class="flex items-center space-x-2 text-gray-600">
+                        <i class="fas fa-chart-line text-primary"></i>
+                        <span class="text-sm font-medium">Real-time Data</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-gray-600">
+                        <i class="fas fa-robot text-accent"></i>
+                        <span class="text-sm font-medium">AI Predictions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12 animate-fade-in">
+            <h2 class="text-5xl font-bold text-gray-800 mb-4">
+                Football <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Analytics</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Dapatkan klasemen terkini dan prediksi AI yang akurat untuk liga-liga top dunia
+            </p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center mb-12 animate-slide-up">
+            <div class="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-2 border border-gray-200">
+                <button id="standingsTab" class="px-8 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg transition-all duration-300">
+                    <i class="fas fa-trophy mr-2"></i>Klasemen
+                </button>
+                <button id="predictionsTab" class="px-8 py-3 rounded-xl text-gray-600 hover:bg-gray-100 font-semibold transition-all duration-300">
+                    <i class="fas fa-crystal-ball mr-2"></i>Prediksi AI
+                </button>
+            </div>
+        </div>
+
+        <!-- Standings Section -->
+        <div id="standingsSection" class="space-y-8 animate-bounce-in">
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-200 card-hover">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-list-ol text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800">Klasemen Liga</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            <i class="fas fa-globe mr-2 text-primary"></i>Liga
+                        </label>
+                        <select id="leagueSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 bg-white shadow-sm">
+                            <option value="">🏆 Pilih Liga</option>
+                            <option value="39">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
+                            <option value="140">🇪🇸 Primera Division</option>
+                            <option value="78">🇩🇪 Bundesliga</option>
+                            <option value="135">🇮🇹 Serie A</option>
+                            <option value="61">🇫🇷 Ligue 1</option>
+                            <option value="2">🏆 UEFA Champions League</option>
+                            <option value="88">🇳🇱 Eredivisie</option>
+                            <option value="71">🇧🇷 Campeonato Brasileiro Série A</option>
+                            <option value="72">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship</option>
+                            <option value="94">🇵🇹 Primeira Liga</option>
+                            <option value="4">🏆 European Championship</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            <i class="fas fa-calendar mr-2 text-primary"></i>Musim
+                        </label>
+                        <select id="seasonSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 bg-white shadow-sm">
+                            <option value="2025">📅 2025</option>
+                            <option value="2024">📅 2024</option>
+                            <option value="2023">📅 2023</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button id="getStandings" class="w-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <i class="fas fa-search mr-2"></i>Lihat Klasemen
+                </button>
+            </div>
+
+            <!-- Standings Results -->
+            <div id="standingsResults" class="hidden bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+                <div class="bg-gradient-to-r from-primary to-secondary p-6">
+                    <h3 class="text-2xl font-bold text-white flex items-center" id="leagueTitle">
+                        <i class="fas fa-trophy mr-3"></i>Klasemen Liga
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                    <i class="fas fa-hashtag mr-2"></i>Pos
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                    <i class="fas fa-users mr-2"></i>Tim
+                                </th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                    <i class="fas fa-play mr-2"></i>Main
+                                </th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                    <i class="fas fa-check-circle mr-2 text-green-500"></i>Menang
+                                </th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                    <i class="fas fa-minus-circle mr-2 text-yellow-500"></i>Seri
+                                </th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                    <i class="fas fa-times-circle mr-2 text-red-500"></i>Kalah
+                                </th>
+                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                    <i class="fas fa-star mr-2 text-yellow-500"></i>Poin
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="standingsTable" class="divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Predictions Section -->
+        <div id="predictionsSection" class="hidden space-y-8 animate-bounce-in">
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-200 card-hover">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-accent to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-brain text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800">Prediksi AI</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">
+                            <i class="fas fa-globe mr-2 text-accent"></i>Liga
+                        </label>
+                        <select id="fixtureLeagueSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-accent/20 focus:border-accent transition-all duration-300 bg-white shadow-sm">
+                            <option value="">🏆 Pilih Liga</option>
+                            <option value="39">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
+                            <option value="140">🇪🇸 Primera Division</option>
+                            <option value="78">🇩🇪 Bundesliga</option>
+                            <option value="135">🇮🇹 Serie A</option>
+                            <option value="61">🇫🇷 Ligue 1</option>
+                            <option value="2">🏆 UEFA Champions League</option>
+                            <option value="88">🇳🇱 Eredivisie</option>
+                            <option value="71">🇧🇷 Campeonato Brasileiro Série A</option>
+                            <option value="72">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship</option>
+                            <option value="94">🇵🇹 Primeira Liga</option>
+                            <option value="4">🏆 European Championship</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="loadFixtures" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <i class="fas fa-download mr-2"></i>Muat Pertandingan
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-8 space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">
+                        <i class="fas fa-futbol mr-2 text-accent"></i>Pilih Pertandingan
+                    </label>
+                    <select id="fixtureSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-accent/20 focus:border-accent transition-all duration-300 bg-white shadow-sm" disabled>
+                        <option value="">⚽ Pilih liga terlebih dahulu</option>
+                    </select>
+                </div>
+                
+                <button id="getPredictions" class="w-full bg-gradient-to-r from-accent to-purple-600 hover:from-purple-600 hover:to-accent text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <i class="fas fa-robot mr-2"></i>Analisis dengan AI
+                </button>
+            </div>
+
+            <!-- Predictions Results -->
+            <div id="predictionsResults" class="hidden bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-200">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">Hasil Analisis AI</h3>
+                </div>
+                <div id="predictionsContent"></div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-8 flex flex-col items-center space-y-4 shadow-2xl border border-gray-200">
+                <div class="relative">
+                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary/20 border-t-primary"></div>
+                    <div class="absolute inset-0 rounded-full h-12 w-12 border-4 border-transparent border-r-secondary animate-spin" style="animation-delay: -0.15s; animation-direction: reverse;"></div>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-700 font-semibold">Memuat data...</p>
+                    <p class="text-gray-500 text-sm">Mohon tunggu sebentar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div id="errorAlert" class="hidden fixed top-6 right-6 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 border border-red-400">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-white"></i>
+                </div>
+                <div>
+                    <p class="font-semibold">Error</p>
+                    <p class="text-sm opacity-90" id="errorMessage">Terjadi kesalahan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-gray-200 mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-futbol text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        Brokoli Football
+                    </span>
+                </div>
+                <p class="text-gray-600 mb-4">Professional Football Analytics Platform</p>
+                <div class="flex justify-center space-x-6 text-gray-500">
+                    <span class="flex items-center space-x-2">
+                        <i class="fas fa-shield-alt text-primary"></i>
+                        <span class="text-sm">Secure</span>
+                    </span>
+                    <span class="flex items-center space-x-2">
+                        <i class="fas fa-clock text-primary"></i>
+                        <span class="text-sm">Real-time</span>
+                    </span>
+                    <span class="flex items-center space-x-2">
+                        <i class="fas fa-brain text-primary"></i>
+                        <span class="text-sm">AI Powered</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
