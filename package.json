@@ -14,8 +14,7 @@
     "typecheck": "tsc --noEmit",
     "vercel-build": "echo 'Static build complete'",
     "railway:build": "npm run build",
-    "railway:start": "npm start",
-    "postinstall": "npm run build"
+    "railway:start": "npm start"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
