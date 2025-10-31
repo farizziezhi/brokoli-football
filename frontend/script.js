@@ -1,4 +1,4 @@
-const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3333/api' : 'https://brokoli-football-production.up.railway.app/api';
+const API_BASE_URL = 'http://localhost:3333/api';
 
 // DOM Elements
 const standingsTab = document.getElementById('standingsTab');
@@ -251,6 +251,8 @@ function displayPredictions(data) {
     const match = data.match;
     const prediction = data.prediction;
     const h2h = data.headToHead;
+    const homeForm = data.homeTeamForm;
+    const awayForm = data.awayTeamForm;
     
     // Enhanced confidence styling
     const getConfidenceColor = (confidence) => {
@@ -339,6 +341,12 @@ function displayPredictions(data) {
             </div>
             
             ${h2hSection}
+            
+            <!-- Team Form Analysis -->
+            <div class="grid md:grid-cols-2 gap-6">
+                ${generateTeamFormSection(match.homeTeam, homeForm, 'Home')}
+                ${generateTeamFormSection(match.awayTeam, awayForm, 'Away')}
+            </div>
             
             <!-- Prediction Cards -->
             <div class="grid md:grid-cols-3 gap-6">
@@ -454,6 +462,117 @@ function populateFixtures(data) {
         fixtureSelect.innerHTML = '<option value="">🚫 Tidak ada pertandingan dalam 14 hari ke depan</option>';
         fixtureSelect.classList.add('opacity-50');
     }
+}
+
+function generateTeamFormSection(team, formData, type) {
+    if (!formData || formData.length === 0) {
+        return `
+            <div class="bg-gradient-to-br from-gray-50 to-slate-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chart-line mr-3 text-blue-500"></i>
+                    ${team.name} Form (${type})
+                </h4>
+                <p class="text-gray-500 text-center py-4">Data form tidak tersedia</p>
+            </div>
+        `;
+    }
+    
+    const recentMatches = formData.slice(0, 5);
+    let wins = 0, draws = 0, losses = 0;
+    
+    const formResults = recentMatches.map(match => {
+        const isHome = match.homeTeam.id === team.id;
+        const homeGoals = match.score?.fullTime?.home || 0;
+        const awayGoals = match.score?.fullTime?.away || 0;
+        
+        let result, resultClass, resultIcon;
+        
+        if (isHome) {
+            if (homeGoals > awayGoals) {
+                result = 'W'; resultClass = 'bg-green-500'; resultIcon = 'fas fa-check';
+                wins++;
+            } else if (homeGoals === awayGoals) {
+                result = 'D'; resultClass = 'bg-yellow-500'; resultIcon = 'fas fa-minus';
+                draws++;
+            } else {
+                result = 'L'; resultClass = 'bg-red-500'; resultIcon = 'fas fa-times';
+                losses++;
+            }
+        } else {
+            if (awayGoals > homeGoals) {
+                result = 'W'; resultClass = 'bg-green-500'; resultIcon = 'fas fa-check';
+                wins++;
+            } else if (homeGoals === awayGoals) {
+                result = 'D'; resultClass = 'bg-yellow-500'; resultIcon = 'fas fa-minus';
+                draws++;
+            } else {
+                result = 'L'; resultClass = 'bg-red-500'; resultIcon = 'fas fa-times';
+                losses++;
+            }
+        }
+        
+        const opponent = isHome ? match.awayTeam.name : match.homeTeam.name;
+        const score = `${homeGoals}-${awayGoals}`;
+        const date = new Date(match.utcDate).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
+        
+        return {
+            result, resultClass, resultIcon, opponent, score, date, isHome
+        };
+    });
+    
+    const formPercentage = ((wins * 3 + draws) / (recentMatches.length * 3)) * 100;
+    
+    return `
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-200 shadow-sm">
+            <h4 class="font-bold text-gray-800 mb-4 flex items-center justify-between">
+                <span class="flex items-center">
+                    <i class="fas fa-chart-line mr-3 text-blue-500"></i>
+                    ${team.name} Form (${type})
+                </span>
+                <span class="text-sm font-medium px-3 py-1 rounded-full ${
+                    formPercentage >= 70 ? 'bg-green-100 text-green-800' :
+                    formPercentage >= 40 ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                }">
+                    ${Math.round(formPercentage)}%
+                </span>
+            </h4>
+            
+            <div class="space-y-3 mb-4">
+                ${formResults.map(match => `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-xl shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 ${match.resultClass} rounded-full flex items-center justify-center">
+                                <i class="${match.resultIcon} text-white text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">
+                                    ${match.isHome ? 'vs' : '@'} ${match.opponent}
+                                </p>
+                                <p class="text-xs text-gray-500">${match.date}</p>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold text-gray-600">${match.score}</span>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="flex justify-center space-x-4 text-sm">
+                <span class="flex items-center space-x-1">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-gray-600">${wins}W</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <span class="text-gray-600">${draws}D</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span class="text-gray-600">${losses}L</span>
+                </span>
+            </div>
+        </div>
+    `;
 }
 
 function showError(message) {

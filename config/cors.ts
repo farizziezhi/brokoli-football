@@ -10,6 +10,8 @@ const corsConfig = defineConfig({
   enabled: true,
   origin: [
     'http://localhost:3000',
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
     'https://brokoli-football.vercel.app',
     'https://brokoli-football-production.up.railway.app'
   ],

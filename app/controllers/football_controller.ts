@@ -68,9 +68,9 @@ export default class FootballController {
         return response.status(apiResponse.status).json({ error: 'API Error', details: errorData })
       }
 
-      const data = await apiResponse.json()
+      const data = await apiResponse.json() as any
       return response.json(data)
-    } catch (error) {
+    } catch (error: any) {
       return response.internalServerError({ error: 'Gagal mengambil data fixtures', details: error.message })
     }
   }
@@ -111,23 +111,46 @@ export default class FootballController {
       
       let h2hData = null
       if (h2hResponse.ok) {
-        h2hData = await h2hResponse.json()
+        h2hData = await h2hResponse.json() as any
       }
       
+      // Get team form data (recent matches for each team)
+      const homeTeamForm = await this.getTeamForm(matchData.homeTeam.id, headers)
+      const awayTeamForm = await this.getTeamForm(matchData.awayTeam.id, headers)
+      
       // Generate AI prediction
-      const prediction = this.generatePrediction(matchData, h2hData)
+      const prediction = this.generatePrediction(matchData, h2hData, homeTeamForm, awayTeamForm)
       
       return response.json({
         match: matchData,
         headToHead: h2hData,
+        homeTeamForm: homeTeamForm,
+        awayTeamForm: awayTeamForm,
         prediction: prediction
       })
-    } catch (error) {
+    } catch (error: any) {
       return response.internalServerError({ error: 'Gagal mengambil data prediksi', details: error.message })
     }
   }
 
-  private generatePrediction(matchData: any, h2hData: any) {
+  private async getTeamForm(teamId: number, headers: Record<string, string>) {
+    try {
+      const url = `${this.footballDataUrl}/teams/${teamId}/matches?limit=5&status=FINISHED`
+      const response = await fetch(url, { headers })
+      
+      if (!response.ok) {
+        return null
+      }
+      
+      const data = await response.json() as any
+      return data.matches || []
+    } catch (error) {
+      console.error('Error fetching team form:', error)
+      return null
+    }
+  }
+
+  private generatePrediction(matchData: any, h2hData: any, homeTeamForm: any, awayTeamForm: any) {
     let homeScore = 50
     let awayScore = 50
     
@@ -136,9 +159,16 @@ export default class FootballController {
     const homeTeamId = matchData.homeTeam?.id
     const awayTeamId = matchData.awayTeam?.id
     
+    // Analyze team form (recent performance)
+    const homeFormScore = this.calculateFormScore(homeTeamForm, homeTeamId)
+    const awayFormScore = this.calculateFormScore(awayTeamForm, awayTeamId)
+    
     // Analyze head-to-head if available
+    let h2hHomeScore = 50
+    let h2hAwayScore = 50
+    
     if (h2hData && h2hData.matches && h2hData.matches.length > 0) {
-      const recentMatches = h2hData.matches.slice(0, 5) // Last 5 matches
+      const recentMatches = h2hData.matches.slice(0, 5)
       let homeWins = 0
       let awayWins = 0
       let draws = 0
@@ -164,21 +194,20 @@ export default class FootballController {
         }
       })
       
-      // Adjust scores based on head-to-head
       const totalMatches = recentMatches.length
       if (totalMatches > 0) {
-        homeScore = 30 + (homeWins / totalMatches) * 40
-        awayScore = 30 + (awayWins / totalMatches) * 40
-        
-        // Add home advantage
-        homeScore += 10
-        awayScore -= 5
+        h2hHomeScore = 30 + (homeWins / totalMatches) * 40
+        h2hAwayScore = 30 + (awayWins / totalMatches) * 40
       }
-    } else {
-      // Default prediction with home advantage
-      homeScore = 55
-      awayScore = 45
     }
+    
+    // Combine form and head-to-head (60% form, 40% h2h)
+    homeScore = (homeFormScore * 0.6) + (h2hHomeScore * 0.4)
+    awayScore = (awayFormScore * 0.6) + (h2hAwayScore * 0.4)
+    
+    // Add home advantage
+    homeScore += 8
+    awayScore -= 3
     
     // Normalize to 100%
     const total = homeScore + awayScore
@@ -202,8 +231,68 @@ export default class FootballController {
       awayWinProbability: awayScore,
       confidence: confidence,
       advice: `Berdasarkan analisis head-to-head, ${winner === 'Draw' ? 'pertandingan kemungkinan berakhir imbang' : winner + ' memiliki peluang menang lebih besar'}`,
-      analysis: h2hData ? `Analisis berdasarkan ${h2hData.matches?.length || 0} pertandingan terakhir` : 'Analisis berdasarkan home advantage'
+      analysis: this.generateAnalysisText(homeTeamForm, awayTeamForm, h2hData)
     }
+  }
+
+  private calculateFormScore(teamMatches: any, teamId: number): number {
+    if (!teamMatches || teamMatches.length === 0) {
+      return 50 // Default score if no form data
+    }
+    
+    let points = 0
+    let totalMatches = 0
+    
+    teamMatches.slice(0, 5).forEach((match: any) => {
+      const isHome = match.homeTeam?.id === teamId
+      const homeGoals = match.score?.fullTime?.home || 0
+      const awayGoals = match.score?.fullTime?.away || 0
+      
+      totalMatches++
+      
+      if (isHome) {
+        if (homeGoals > awayGoals) points += 3 // Win
+        else if (homeGoals === awayGoals) points += 1 // Draw
+      } else {
+        if (awayGoals > homeGoals) points += 3 // Win
+        else if (homeGoals === awayGoals) points += 1 // Draw
+      }
+    })
+    
+    // Convert to percentage (max 15 points from 5 matches)
+    const maxPoints = totalMatches * 3
+    const percentage = maxPoints > 0 ? (points / maxPoints) * 100 : 50
+    
+    return Math.min(Math.max(percentage, 20), 80) // Clamp between 20-80
+  }
+
+  private generateAnalysisText(homeForm: any, awayForm: any, h2hData: any): string {
+    const homeFormText = this.getFormText(homeForm)
+    const awayFormText = this.getFormText(awayForm)
+    const h2hText = h2hData?.matches?.length ? `${h2hData.matches.length} head-to-head` : 'no head-to-head'
+    
+    return `Analisis berdasarkan form tim (${homeFormText} vs ${awayFormText}) dan ${h2hText} data`
+  }
+
+  private getFormText(teamMatches: any): string {
+    if (!teamMatches || teamMatches.length === 0) {
+      return 'data tidak tersedia'
+    }
+    
+    let wins = 0
+    let draws = 0
+    let losses = 0
+    
+    teamMatches.slice(0, 5).forEach((match: any) => {
+      const homeGoals = match.score?.fullTime?.home || 0
+      const awayGoals = match.score?.fullTime?.away || 0
+      
+      if (homeGoals > awayGoals) wins++
+      else if (homeGoals === awayGoals) draws++
+      else losses++
+    })
+    
+    return `${wins}W-${draws}D-${losses}L`
   }
 
   async standings({ request, response }: HttpContext) {
@@ -278,10 +367,10 @@ export default class FootballController {
         return response.status(apiResponse.status).json({ error: 'API Error', details: errorData })
       }
 
-      const data = await apiResponse.json()
+      const data = await apiResponse.json() as any
       console.log('Success data:', JSON.stringify(data, null, 2))
       return response.json(data)
-    } catch (error) {
+    } catch (error: any) {
       console.log('Fetch Error:', error)
       return response.internalServerError({ error: 'Gagal mengambil data klasemen', details: error.message })
     }
