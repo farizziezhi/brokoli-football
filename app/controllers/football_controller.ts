@@ -95,7 +95,7 @@ export default class FootballController {
         return response.status(matchResponse.status).json({ error: 'Match not found' })
       }
       
-      const matchData = await matchResponse.json()
+      const matchData = await matchResponse.json() as any
       console.log('Match data:', matchData)
       
       if (!matchData.homeTeam || !matchData.awayTeam) {
