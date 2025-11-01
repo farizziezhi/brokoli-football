@@ -70,7 +70,7 @@ export default class NotificationService {
 
       const sendSmtpEmail = new brevo.SendSmtpEmail()
       sendSmtpEmail.to = [{ email: email }]
-      sendSmtpEmail.sender = { email: 'noreply@brevo.com', name: 'Brokoli Football' }
+      sendSmtpEmail.sender = { email: 'farizzi79@gmail.com', name: 'Brokoli Football' }
       sendSmtpEmail.subject = `🏆 ${matches.length} Pertandingan Hari Ini - Brokoli Football`
       sendSmtpEmail.textContent = `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
 
