@@ -1,11 +1,43 @@
 import { Resend } from 'resend'
 import env from '#start/env'
+import fs from 'fs'
+import path from 'path'
 
 export default class NotificationService {
-  private static subscriptions: Array<{email: string, leagues: string[]}> = []
+  private static subscriptionsFile = path.join(process.cwd(), 'subscriptions.json')
+  
+  private static loadSubscriptions(): Array<{email: string, leagues: string[]}> {
+    try {
+      if (fs.existsSync(this.subscriptionsFile)) {
+        const data = fs.readFileSync(this.subscriptionsFile, 'utf8')
+        return JSON.parse(data)
+      }
+    } catch (error) {
+      console.error('Error loading subscriptions:', error)
+    }
+    return []
+  }
+  
+  private static saveSubscriptions(subscriptions: Array<{email: string, leagues: string[]}>) {
+    try {
+      fs.writeFileSync(this.subscriptionsFile, JSON.stringify(subscriptions, null, 2))
+    } catch (error) {
+      console.error('Error saving subscriptions:', error)
+    }
+  }
 
   static addSubscription(email: string, leagues: string[]) {
-    this.subscriptions.push({ email, leagues })
+    const subscriptions = this.loadSubscriptions()
+    
+    // Check if email already exists
+    const existingIndex = subscriptions.findIndex(sub => sub.email === email)
+    if (existingIndex >= 0) {
+      subscriptions[existingIndex].leagues = leagues // Update leagues
+    } else {
+      subscriptions.push({ email, leagues }) // Add new
+    }
+    
+    this.saveSubscriptions(subscriptions)
   }
 
   static async sendDailyNotifications() {
@@ -17,14 +49,15 @@ export default class NotificationService {
         console.log(`🏆 ${data.matches.length} pertandingan hari ini! Mengirim email...`)
         
         // Send emails to all subscribers
-        for (const subscriber of this.subscriptions) {
+        const subscriptions = this.loadSubscriptions()
+        for (const subscriber of subscriptions) {
           await this.sendEmail(subscriber.email, data.matches)
         }
         
-        return { success: true, matchCount: data.matches.length, emailsSent: this.subscriptions.length }
+        return { success: true, matchCount: data.matches.length, emailsSent: subscriptions.length }
       }
       
-      return { success: true, matchCount: 0, emailsSent: 0 }
+      return { success: true, matchCount: 0, emailsSent: this.loadSubscriptions().length }
     } catch (error: any) {
       console.error('Error sending daily notifications:', error)
       return { success: false, error: error.message }
@@ -53,6 +86,6 @@ export default class NotificationService {
   }
 
   static getSubscriptionCount() {
-    return this.subscriptions.length
+    return this.loadSubscriptions().length
   }
 }
