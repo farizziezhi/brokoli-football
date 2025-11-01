@@ -5,7 +5,6 @@ import NotificationService from '#services/notification_service'
 export default class FootballController {
   private readonly footballDataUrl = 'https://api.football-data.org/v4'
   private readonly footballDataKey = env.get('FOOTBALL_DATA_API_KEY')
-  private subscriptions: Array<{endpoint: string, keys: any, leagues: string[]}> = []
 
   async fixtures({ request, response }: HttpContext) {
     const league = request.input('league')

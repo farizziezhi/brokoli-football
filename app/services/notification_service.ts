@@ -12,7 +12,7 @@ export default class NotificationService {
   static async sendDailyNotifications() {
     try {
       const response = await fetch('https://brokoli-football-production.up.railway.app/api/today-matches')
-      const data = await response.json()
+      const data = await response.json() as any
       
       if (data.matches && data.matches.length > 0) {
         console.log(`🏆 ${data.matches.length} pertandingan hari ini! Mengirim notifikasi...`)
@@ -20,9 +20,9 @@ export default class NotificationService {
       }
       
       return { success: true, matchCount: 0, subscribers: this.subscriptions.length }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending daily notifications:', error)
-      return { success: false, error: error }
+      return { success: false, error: error.message }
     }
   }
 
