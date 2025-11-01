@@ -1,43 +1,37 @@
 import { Resend } from 'resend'
 import env from '#start/env'
-import fs from 'fs'
-import path from 'path'
+import { createClient } from '@supabase/supabase-js'
 
 export default class NotificationService {
-  private static subscriptionsFile = path.join(process.cwd(), 'subscriptions.json')
+  private static supabase = createClient(
+    env.get('SUPABASE_URL') || '',
+    env.get('SUPABASE_ANON_KEY') || ''
+  )
   
-  private static loadSubscriptions(): Array<{email: string, leagues: string[]}> {
+  private static async loadSubscriptions(): Promise<Array<{email: string, leagues: string[]}>> {
     try {
-      if (fs.existsSync(this.subscriptionsFile)) {
-        const data = fs.readFileSync(this.subscriptionsFile, 'utf8')
-        return JSON.parse(data)
-      }
+      const { data, error } = await this.supabase
+        .from('subscriptions')
+        .select('email, leagues')
+      
+      if (error) throw error
+      return data || []
     } catch (error) {
       console.error('Error loading subscriptions:', error)
-    }
-    return []
-  }
-  
-  private static saveSubscriptions(subscriptions: Array<{email: string, leagues: string[]}>) {
-    try {
-      fs.writeFileSync(this.subscriptionsFile, JSON.stringify(subscriptions, null, 2))
-    } catch (error) {
-      console.error('Error saving subscriptions:', error)
+      return []
     }
   }
 
-  static addSubscription(email: string, leagues: string[]) {
-    const subscriptions = this.loadSubscriptions()
-    
-    // Check if email already exists
-    const existingIndex = subscriptions.findIndex(sub => sub.email === email)
-    if (existingIndex >= 0) {
-      subscriptions[existingIndex].leagues = leagues // Update leagues
-    } else {
-      subscriptions.push({ email, leagues }) // Add new
+  static async addSubscription(email: string, leagues: string[]) {
+    try {
+      const { error } = await this.supabase
+        .from('subscriptions')
+        .upsert({ email, leagues }, { onConflict: 'email' })
+      
+      if (error) throw error
+    } catch (error) {
+      console.error('Error saving subscription:', error)
     }
-    
-    this.saveSubscriptions(subscriptions)
   }
 
   static async sendDailyNotifications() {
@@ -49,7 +43,7 @@ export default class NotificationService {
         console.log(`🏆 ${data.matches.length} pertandingan hari ini! Mengirim email...`)
         
         // Send emails to all subscribers
-        const subscriptions = this.loadSubscriptions()
+        const subscriptions = await this.loadSubscriptions()
         for (const subscriber of subscriptions) {
           await this.sendEmail(subscriber.email, data.matches)
         }
@@ -57,7 +51,8 @@ export default class NotificationService {
         return { success: true, matchCount: data.matches.length, emailsSent: subscriptions.length }
       }
       
-      return { success: true, matchCount: 0, emailsSent: this.loadSubscriptions().length }
+      const subscriptions = await this.loadSubscriptions()
+      return { success: true, matchCount: 0, emailsSent: subscriptions.length }
     } catch (error: any) {
       console.error('Error sending daily notifications:', error)
       return { success: false, error: error.message }
@@ -85,7 +80,8 @@ export default class NotificationService {
     }
   }
 
-  static getSubscriptionCount() {
-    return this.loadSubscriptions().length
+  static async getSubscriptionCount() {
+    const subscriptions = await this.loadSubscriptions()
+    return subscriptions.length
   }
 }

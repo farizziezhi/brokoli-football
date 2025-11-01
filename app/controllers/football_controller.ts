@@ -384,12 +384,12 @@ export default class FootballController {
       return response.badRequest({ error: 'Email dan leagues wajib diisi' })
     }
     
-    NotificationService.addSubscription(email, leagues)
+    await NotificationService.addSubscription(email, leagues)
     
     return response.json({ 
       success: true, 
       message: 'Berhasil subscribe notifikasi email',
-      totalSubscribers: NotificationService.getSubscriptionCount()
+      totalSubscribers: await NotificationService.getSubscriptionCount()
     })
   }
 
