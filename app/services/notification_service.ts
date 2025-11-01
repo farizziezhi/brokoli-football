@@ -62,11 +62,19 @@ export default class NotificationService {
   private static async sendEmail(email: string, matches: any[]) {
     try {
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
         auth: {
           user: env.get('GMAIL_USER'),
           pass: env.get('GMAIL_PASS')
-        }
+        },
+        tls: {
+          rejectUnauthorized: false
+        },
+        connectionTimeout: 60000,
+        greetingTimeout: 30000,
+        socketTimeout: 60000
       })
 
       const matchList = matches.map(match => 
