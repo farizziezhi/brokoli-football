@@ -1,5 +1,21 @@
 const API_BASE_URL = 'https://brokoli-football-production.up.railway.app/api';
 
+// Check for daily matches on page load
+window.addEventListener('load', checkTodayMatches);
+
+async function checkTodayMatches() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/today-matches`);
+        const data = await response.json();
+        
+        if (data.matches && data.matches.length > 0) {
+            console.log(`🏆 ${data.matches.length} pertandingan hari ini!`);
+        }
+    } catch (error) {
+        console.log('Could not check today matches:', error);
+    }
+}
+
 // DOM Elements
 const standingsTab = document.getElementById('standingsTab');
 const predictionsTab = document.getElementById('predictionsTab');
@@ -584,4 +600,48 @@ function showError(message) {
         errorAlert.classList.add('hidden');
         errorAlert.classList.remove('animate-slide-up');
     }, 5000);
+}
+
+// Notification functions
+async function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        showError('Browser tidak mendukung notifikasi');
+        return;
+    }
+    
+    const permission = await Notification.requestPermission();
+    
+    if (permission === 'granted') {
+        // Subscribe to all major leagues
+        const selectedLeagues = ['39', '140', '78', '135', '61'];
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    subscription: { endpoint: 'browser', keys: {} }, 
+                    leagues: selectedLeagues 
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert('🔔 Notifikasi harian berhasil diaktifkan! Anda akan mendapat pemberitahuan setiap ada pertandingan.');
+                
+                // Show test notification
+                new Notification('Brokoli Football', {
+                    body: 'Notifikasi harian telah diaktifkan! 🏆',
+                    icon: '/favicon.ico'
+                });
+            } else {
+                showError(data.error || 'Gagal mengaktifkan notifikasi');
+            }
+        } catch (error) {
+            showError('Gagal menghubungi server');
+        }
+    } else {
+        showError('Izin notifikasi ditolak. Aktifkan di pengaturan browser.');
+    }
 }

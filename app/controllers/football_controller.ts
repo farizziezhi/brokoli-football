@@ -4,6 +4,7 @@ import env from '#start/env'
 export default class FootballController {
   private readonly footballDataUrl = 'https://api.football-data.org/v4'
   private readonly footballDataKey = env.get('FOOTBALL_DATA_API_KEY')
+  private subscriptions: Array<{endpoint: string, keys: any, leagues: string[]}> = []
 
   async fixtures({ request, response }: HttpContext) {
     const league = request.input('league')
@@ -376,5 +377,57 @@ export default class FootballController {
     }
   }
 
+  async subscribe({ request, response }: HttpContext) {
+    const { subscription, leagues } = request.only(['subscription', 'leagues'])
+    
+    if (!subscription || !leagues) {
+      return response.badRequest({ error: 'Subscription dan leagues wajib diisi' })
+    }
+    
+    this.subscriptions.push({
+      endpoint: subscription.endpoint,
+      keys: subscription.keys,
+      leagues: leagues
+    })
+    
+    return response.json({ success: true, message: 'Berhasil subscribe notifikasi' })
+  }
+
+  async todayMatches({ response }: HttpContext) {
+    const today = new Date().toISOString().split('T')[0]
+    const matches: any[] = []
+    
+    const leagues = ['39', '140', '78', '135', '61']
+    
+    for (const league of leagues) {
+      try {
+        const leagueCode = this.getLeagueCode(league)
+        const url = `${this.footballDataUrl}/competitions/${leagueCode}/matches?dateFrom=${today}&dateTo=${today}`
+        const headers: Record<string, string> = {}
+        if (this.footballDataKey) {
+          headers['X-Auth-Token'] = this.footballDataKey
+        }
+        
+        const apiResponse = await fetch(url, { headers })
+        if (apiResponse.ok) {
+          const data = await apiResponse.json() as any
+          if (data.matches) {
+            matches.push(...data.matches)
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching matches for league ${league}:`, error)
+      }
+    }
+    
+    return response.json({ matches, date: today })
+  }
+
+  private getLeagueCode(league: string): string {
+    const mapping: Record<string, string> = {
+      '39': 'PL', '140': 'PD', '78': 'BL1', '135': 'SA', '61': 'FL1'
+    }
+    return mapping[league] || 'PL'
+  }
 
 }
