@@ -7,14 +7,14 @@ export default class ChatbotController {
 
   async chat({ request, response }: HttpContext) {
     const { message } = request.only(['message'])
-    
+
     if (!message) {
       return response.badRequest({ error: 'Message wajib diisi' })
     }
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro' })
-      
+      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' })
+
       const prompt = `Kamu adalah asisten AI untuk website Brokoli Football. 
       Jawab pertanyaan tentang sepak bola, prediksi pertandingan, klasemen liga, dan jadwal pertandingan.
       Gunakan bahasa Indonesia yang ramah dan informatif.
@@ -26,13 +26,13 @@ export default class ChatbotController {
 
       return response.json({
         success: true,
-        message: aiResponse
+        message: aiResponse,
       })
     } catch (error: any) {
       console.error('Gemini API error:', error)
-      return response.internalServerError({ 
-        error: 'Gagal memproses pesan', 
-        details: error.message 
+      return response.internalServerError({
+        error: 'Gagal memproses pesan',
+        details: error.message,
       })
     }
   }
