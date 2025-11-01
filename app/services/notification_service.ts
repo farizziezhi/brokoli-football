@@ -1,4 +1,4 @@
-import { Resend } from 'resend'
+import emailjs from '@emailjs/nodejs'
 import env from '#start/env'
 import { createClient } from '@supabase/supabase-js'
 
@@ -61,18 +61,23 @@ export default class NotificationService {
 
   private static async sendEmail(email: string, matches: any[]) {
     try {
-      const resend = new Resend(env.get('RESEND_API_KEY'))
-
       const matchList = matches.map(match => 
         `⚽ ${match.homeTeam.name} vs ${match.awayTeam.name} - ${new Date(match.utcDate).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`
       ).join('\n')
 
-      await resend.emails.send({
-        from: 'Brokoli Football <noreply@resend.dev>',
-        to: email,
-        subject: `🏆 ${matches.length} Pertandingan Hari Ini`,
-        text: `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
-      })
+      await emailjs.send(
+        env.get('EMAILJS_SERVICE_ID') || '',
+        env.get('EMAILJS_TEMPLATE_ID') || '',
+        {
+          to_email: email,
+          subject: `🏆 ${matches.length} Pertandingan Hari Ini`,
+          message: `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
+        },
+        {
+          publicKey: env.get('EMAILJS_PUBLIC_KEY'),
+          privateKey: env.get('EMAILJS_PRIVATE_KEY')
+        }
+      )
 
       console.log(`Email sent to ${email}`)
     } catch (error) {
