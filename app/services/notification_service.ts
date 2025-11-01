@@ -64,15 +64,17 @@ export default class NotificationService {
       const apiInstance = new brevo.TransactionalEmailsApi()
       apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, env.get('BREVO_API_KEY') || '')
 
-      const matchList = matches.map(match => 
-        `⚽ ${match.homeTeam.name} vs ${match.awayTeam.name} - ${new Date(match.utcDate).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`
-      ).join('\n')
+      const matchList = matches.map(match => {
+        const matchTime = new Date(match.utcDate)
+        const wibTime = new Date(matchTime.getTime() + (7 * 60 * 60 * 1000)) // UTC+7
+        return `⚽ ${match.homeTeam.name} vs ${match.awayTeam.name} - ${wibTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`
+      }).join('\n')
 
       const sendSmtpEmail = new brevo.SendSmtpEmail()
       sendSmtpEmail.to = [{ email: email }]
       sendSmtpEmail.sender = { email: 'farizzi79@gmail.com', name: 'Brokoli Football' }
       sendSmtpEmail.subject = `🏆 ${matches.length} Pertandingan Hari Ini - Brokoli Football`
-      sendSmtpEmail.textContent = `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
+      sendSmtpEmail.textContent = `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football.vercel.app untuk prediksi AI!`
 
       await apiInstance.sendTransacEmail(sendSmtpEmail)
       console.log(`Email sent to ${email}`)
