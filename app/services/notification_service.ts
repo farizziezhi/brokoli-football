@@ -1,4 +1,4 @@
-import emailjs from '@emailjs/nodejs'
+import nodemailer from 'nodemailer'
 import env from '#start/env'
 import { createClient } from '@supabase/supabase-js'
 
@@ -61,23 +61,24 @@ export default class NotificationService {
 
   private static async sendEmail(email: string, matches: any[]) {
     try {
+      const transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+          user: env.get('GMAIL_USER'),
+          pass: env.get('GMAIL_PASS')
+        }
+      })
+
       const matchList = matches.map(match => 
         `⚽ ${match.homeTeam.name} vs ${match.awayTeam.name} - ${new Date(match.utcDate).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`
       ).join('\n')
 
-      await emailjs.send(
-        env.get('EMAILJS_SERVICE_ID') || '',
-        env.get('EMAILJS_TEMPLATE_ID') || '',
-        {
-          to_email: email,
-          subject: `🏆 ${matches.length} Pertandingan Hari Ini`,
-          message: `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
-        },
-        {
-          publicKey: env.get('EMAILJS_PUBLIC_KEY'),
-          privateKey: env.get('EMAILJS_PRIVATE_KEY')
-        }
-      )
+      await transporter.sendMail({
+        from: env.get('GMAIL_USER'),
+        to: email,
+        subject: `🏆 ${matches.length} Pertandingan Hari Ini - Brokoli Football`,
+        text: `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
+      })
 
       console.log(`Email sent to ${email}`)
     } catch (error) {
