@@ -63,18 +63,12 @@ export default class NotificationService {
     try {
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
+        port: 465,
+        secure: true,
         auth: {
           user: env.get('GMAIL_USER'),
           pass: env.get('GMAIL_PASS')
-        },
-        tls: {
-          rejectUnauthorized: false
-        },
-        connectionTimeout: 60000,
-        greetingTimeout: 30000,
-        socketTimeout: 60000
+        }
       })
 
       const matchList = matches.map(match => 
