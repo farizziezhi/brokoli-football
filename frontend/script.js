@@ -602,46 +602,42 @@ function showError(message) {
     }, 5000);
 }
 
-// Notification functions
-async function requestNotificationPermission() {
-    if (!('Notification' in window)) {
-        showError('Browser tidak mendukung notifikasi');
+// Email subscription functions
+function showEmailModal() {
+    document.getElementById('emailModal').classList.remove('hidden');
+}
+
+function closeEmailModal() {
+    document.getElementById('emailModal').classList.add('hidden');
+    document.getElementById('emailInput').value = '';
+}
+
+async function subscribeEmail() {
+    const email = document.getElementById('emailInput').value;
+    
+    if (!email || !email.includes('@')) {
+        showError('Masukkan email yang valid');
         return;
     }
     
-    const permission = await Notification.requestPermission();
+    const selectedLeagues = ['39', '140', '78', '135', '61'];
     
-    if (permission === 'granted') {
-        // Subscribe to all major leagues
-        const selectedLeagues = ['39', '140', '78', '135', '61'];
+    try {
+        const response = await fetch(`${API_BASE_URL}/subscribe`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, leagues: selectedLeagues })
+        });
         
-        try {
-            const response = await fetch(`${API_BASE_URL}/subscribe`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    subscription: { endpoint: 'browser', keys: {} }, 
-                    leagues: selectedLeagues 
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                alert('🔔 Notifikasi harian berhasil diaktifkan! Anda akan mendapat pemberitahuan setiap ada pertandingan.');
-                
-                // Show test notification
-                new Notification('Brokoli Football', {
-                    body: 'Notifikasi harian telah diaktifkan! 🏆',
-                    icon: '/favicon.ico'
-                });
-            } else {
-                showError(data.error || 'Gagal mengaktifkan notifikasi');
-            }
-        } catch (error) {
-            showError('Gagal menghubungi server');
+        const data = await response.json();
+        
+        if (response.ok) {
+            closeEmailModal();
+            alert('📧 Email subscription berhasil! Anda akan mendapat notifikasi pertandingan setiap hari.');
+        } else {
+            showError(data.error || 'Gagal subscribe email');
         }
-    } else {
-        showError('Izin notifikasi ditolak. Aktifkan di pengaturan browser.');
+    } catch (error) {
+        showError('Gagal menghubungi server');
     }
 }

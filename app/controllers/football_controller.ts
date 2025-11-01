@@ -378,17 +378,17 @@ export default class FootballController {
   }
 
   async subscribe({ request, response }: HttpContext) {
-    const { subscription, leagues } = request.only(['subscription', 'leagues'])
+    const { email, leagues } = request.only(['email', 'leagues'])
     
-    if (!subscription || !leagues) {
-      return response.badRequest({ error: 'Subscription dan leagues wajib diisi' })
+    if (!email || !leagues) {
+      return response.badRequest({ error: 'Email dan leagues wajib diisi' })
     }
     
-    NotificationService.addSubscription(subscription, leagues)
+    NotificationService.addSubscription(email, leagues)
     
     return response.json({ 
       success: true, 
-      message: 'Berhasil subscribe notifikasi',
+      message: 'Berhasil subscribe notifikasi email',
       totalSubscribers: NotificationService.getSubscriptionCount()
     })
   }
