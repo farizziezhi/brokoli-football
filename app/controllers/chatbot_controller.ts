@@ -13,7 +13,7 @@ export default class ChatbotController {
     }
 
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-pro' })
+      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
       
       const prompt = `Kamu adalah asisten AI untuk website Brokoli Football. 
       Jawab pertanyaan tentang sepak bola, prediksi pertandingan, klasemen liga, dan jadwal pertandingan.
