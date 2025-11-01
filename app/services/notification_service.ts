@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import * as brevo from '@getbrevo/brevo'
 import env from '#start/env'
 import { createClient } from '@supabase/supabase-js'
 
@@ -61,27 +61,20 @@ export default class NotificationService {
 
   private static async sendEmail(email: string, matches: any[]) {
     try {
-      const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: env.get('GMAIL_USER'),
-          pass: env.get('GMAIL_PASS')
-        }
-      })
+      const apiInstance = new brevo.TransactionalEmailsApi()
+      apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, env.get('BREVO_API_KEY') || '')
 
       const matchList = matches.map(match => 
         `⚽ ${match.homeTeam.name} vs ${match.awayTeam.name} - ${new Date(match.utcDate).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`
       ).join('\n')
 
-      await transporter.sendMail({
-        from: env.get('GMAIL_USER'),
-        to: email,
-        subject: `🏆 ${matches.length} Pertandingan Hari Ini - Brokoli Football`,
-        text: `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
-      })
+      const sendSmtpEmail = new brevo.SendSmtpEmail()
+      sendSmtpEmail.to = [{ email: email }]
+      sendSmtpEmail.sender = { email: 'noreply@brevo.com', name: 'Brokoli Football' }
+      sendSmtpEmail.subject = `🏆 ${matches.length} Pertandingan Hari Ini - Brokoli Football`
+      sendSmtpEmail.textContent = `Halo! Ada ${matches.length} pertandingan menarik hari ini:\n\n${matchList}\n\nKunjungi https://brokoli-football-production.up.railway.app untuk prediksi AI!`
 
+      await apiInstance.sendTransacEmail(sendSmtpEmail)
       console.log(`Email sent to ${email}`)
     } catch (error) {
       console.error(`Failed to send email to ${email}:`, error)
