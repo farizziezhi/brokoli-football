@@ -3,6 +3,77 @@ const API_BASE_URL = 'https://brokoli-football-production.up.railway.app/api';
 // Check for daily matches on page load
 window.addEventListener('load', checkTodayMatches);
 
+// Chatbot functionality
+const chatToggle = document.getElementById('chatToggle');
+const chatBox = document.getElementById('chatBox');
+const chatInput = document.getElementById('chatInput');
+const chatSend = document.getElementById('chatSend');
+const chatMessages = document.getElementById('chatMessages');
+
+chatToggle.addEventListener('click', () => {
+    chatBox.classList.toggle('hidden');
+});
+
+chatSend.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
+
+async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    
+    // Add user message
+    addMessage(message, 'user');
+    chatInput.value = '';
+    
+    // Add loading message
+    const loadingId = addMessage('Sedang berpikir...', 'bot', true);
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        
+        const data = await response.json();
+        
+        // Remove loading message
+        document.getElementById(loadingId).remove();
+        
+        if (response.ok) {
+            addMessage(data.message, 'bot');
+        } else {
+            addMessage('Maaf, terjadi kesalahan. Coba lagi nanti.', 'bot');
+        }
+    } catch (error) {
+        document.getElementById(loadingId).remove();
+        addMessage('Koneksi bermasalah. Coba lagi nanti.', 'bot');
+    }
+}
+
+function addMessage(text, sender, isLoading = false) {
+    const messageId = 'msg-' + Date.now();
+    const messageDiv = document.createElement('div');
+    messageDiv.id = messageId;
+    messageDiv.className = sender === 'user' ? 'text-right' : 'text-left';
+    
+    const bubble = document.createElement('div');
+    bubble.className = sender === 'user' 
+        ? 'bg-blue-500 text-white p-3 rounded-lg inline-block max-w-xs'
+        : 'bg-gray-100 text-gray-800 p-3 rounded-lg inline-block max-w-xs';
+    
+    bubble.innerHTML = `<p class="text-sm">${isLoading ? '<i class="fas fa-spinner fa-spin mr-2"></i>' : ''}${text}</p>`;
+    messageDiv.appendChild(bubble);
+    chatMessages.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    return messageId;
+}
+
 async function checkTodayMatches() {
     try {
         const response = await fetch(`${API_BASE_URL}/today-matches`);

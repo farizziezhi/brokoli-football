@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 const FootballController = () => import('#controllers/football_controller')
+const ChatbotController = () => import('#controllers/chatbot_controller')
 
 router.get('/', async () => {
   return {
@@ -23,4 +24,5 @@ router.group(() => {
   router.post('/subscribe', [FootballController, 'subscribe'])
   router.get('/today-matches', [FootballController, 'todayMatches'])
   router.post('/send-notifications', [FootballController, 'sendNotifications'])
+  router.post('/chat', [ChatbotController, 'chat'])
 }).prefix('/api')
