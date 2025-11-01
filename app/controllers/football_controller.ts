@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import env from '#start/env'
+import NotificationService from '#services/notification_service'
 
 export default class FootballController {
   private readonly footballDataUrl = 'https://api.football-data.org/v4'
@@ -384,13 +385,13 @@ export default class FootballController {
       return response.badRequest({ error: 'Subscription dan leagues wajib diisi' })
     }
     
-    this.subscriptions.push({
-      endpoint: subscription.endpoint,
-      keys: subscription.keys,
-      leagues: leagues
-    })
+    NotificationService.addSubscription(subscription, leagues)
     
-    return response.json({ success: true, message: 'Berhasil subscribe notifikasi' })
+    return response.json({ 
+      success: true, 
+      message: 'Berhasil subscribe notifikasi',
+      totalSubscribers: NotificationService.getSubscriptionCount()
+    })
   }
 
   async todayMatches({ response }: HttpContext) {
@@ -421,6 +422,11 @@ export default class FootballController {
     }
     
     return response.json({ matches, date: today })
+  }
+
+  async sendNotifications({ response }: HttpContext) {
+    const result = await NotificationService.sendDailyNotifications()
+    return response.json(result)
   }
 
   private getLeagueCode(league: string): string {

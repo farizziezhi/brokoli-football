@@ -1,0 +1,15 @@
+name: Daily Football Notifications
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Setiap hari jam 8 pagi UTC (09:00 WIB)
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  send-notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Daily Notifications
+        run: |
+          curl -X POST https://brokoli-football-production.up.railway.app/api/send-notifications \
+            -H "Content-Type: application/json"

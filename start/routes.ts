@@ -22,4 +22,5 @@ router.group(() => {
   router.get('/standings', [FootballController, 'standings'])
   router.post('/subscribe', [FootballController, 'subscribe'])
   router.get('/today-matches', [FootballController, 'todayMatches'])
+  router.post('/send-notifications', [FootballController, 'sendNotifications'])
 }).prefix('/api')
