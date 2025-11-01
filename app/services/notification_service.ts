@@ -61,7 +61,7 @@ export default class NotificationService {
 
   private static async sendEmail(email: string, matches: any[]) {
     try {
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: env.get('GMAIL_USER'),
