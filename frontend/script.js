@@ -3,6 +3,19 @@ const API_BASE_URL = 'https://brokoli-football-production.up.railway.app/api';
 // Check for daily matches on page load
 window.addEventListener('load', checkTodayMatches);
 
+// Mobile menu toggle
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (mobileMenuToggle && mobileMenu) {
+    mobileMenuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
+}
+
 // Chatbot functionality
 const chatToggle = document.getElementById('chatToggle');
 const chatBox = document.getElementById('chatBox');
