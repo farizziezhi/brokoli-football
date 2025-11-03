@@ -448,6 +448,7 @@ export default class FootballController {
       '78': 'BL1',
       '135': 'SA',
       '61': 'FL1',
+      '2': 'CL',
     }
     return mapping[league] || 'PL'
   }
