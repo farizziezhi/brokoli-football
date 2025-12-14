@@ -1,389 +1,599 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brokoli Football - Professional Football Analytics</title>
+<!doctype html>
+<html lang="id" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brokoli Football - Professional Analytics</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#10b981',
-                        secondary: '#059669',
-                        accent: '#6366f1'
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'bounce-in': 'bounceIn 0.8s ease-out'
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Outfit', 'sans-serif'],
+            },
+            colors: {
+              dark: {
+                DEFAULT: '#09090b', // Zinc 950
+                lighter: '#18181b', // Zinc 900
+                card: '#27272a', // Zinc 800
+              },
+              neon: {
+                green: '#10b981',
+                blue: '#3b82f6',
+                purple: '#8b5cf6',
+                red: '#ef4444',
+              },
+            },
+            backgroundImage: {
+              'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+              'hero-pattern':
+                'url(\'data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0h40v40H0V0zm1 1h38v38H1V1z" fill="%23ffffff" fill-opacity="0.02"/%3E%3C/svg%3E\')',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.6s ease-out forwards',
+              'slide-up': 'slideUp 0.6s ease-out forwards',
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+          },
+        },
+      }
     </script>
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+      body {
+        font-family: 'Outfit', sans-serif;
+        background-color: #050505;
+        color: #ffffff;
+        overflow-x: hidden;
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .glass-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.03) 0%,
+          rgba(255, 255, 255, 0.01) 100%
+        );
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08); /* Reduced border opacity */
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+      }
+
+      .glass-card:hover {
+        border-color: rgba(59, 130, 246, 0.3);
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #09090b;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #27272a;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #3f3f46;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
         }
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        to {
+          opacity: 1;
         }
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        to {
+          transform: translateY(0);
+          opacity: 1;
         }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+      }
+
+      .text-glow {
+        text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+      }
+
+      .neon-border-b {
+        border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+        box-shadow: 0 4px 15px -5px rgba(59, 130, 246, 0.2);
+      }
     </style>
-</head>
-<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  </head>
+  <body
+    class="bg-[#050505] min-h-screen flex flex-col text-white selection:bg-neon-blue selection:text-white"
+  >
+    <!-- Background Effects -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div
+        class="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-neon-blue/10 rounded-full blur-[120px]"
+      ></div>
+      <div
+        class="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-neon-green/10 rounded-full blur-[120px]"
+      ></div>
+      <div class="absolute inset-0 bg-hero-pattern opacity-20"></div>
+    </div>
+
     <!-- Navigation Bar -->
-    <nav class="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200 sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
-                        <i class="fas fa-futbol text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            Brokoli Football
-                        </h1>
-                        <p class="text-sm text-gray-500">Professional Football Analytics</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button onclick="showEmailModal()" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-orange-500 hover:to-yellow-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm">
-                        <i class="fas fa-envelope mr-1 md:mr-2"></i><span class="hidden sm:inline">Email Harian</span><span class="sm:hidden">Email</span>
-                    </button>
-                    <button id="mobileMenuToggle" class="md:hidden text-gray-600 hover:text-primary transition-colors">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
-                
-                <!-- Mobile Menu -->
-                <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200 p-4">
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-2 text-gray-600">
-                            <i class="fas fa-chart-line text-primary"></i>
-                            <span class="text-sm font-medium">Real-time Data</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-gray-600">
-                            <i class="fas fa-robot text-accent"></i>
-                            <span class="text-sm font-medium">AI Predictions</span>
-                        </div>
-                    </div>
-                </div>
+    <nav class="fixed top-0 w-full z-50 glass neon-border-b transition-all duration-300">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3 group cursor-pointer">
+            <div class="relative w-10 h-10 flex items-center justify-center">
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-neon-blue to-neon-green rounded-lg rotate-3 group-hover:rotate-6 transition-transform opacity-80 blur-sm"
+              ></div>
+              <div
+                class="relative w-full h-full bg-black rounded-lg border border-white/10 flex items-center justify-center z-10"
+              >
+                <i
+                  class="fas fa-futbol text-white text-lg group-hover:scale-110 transition-transform"
+                ></i>
+              </div>
             </div>
+            <div>
+              <h1
+                class="text-xl font-bold tracking-wider uppercase text-white group-hover:text-glow transition-all"
+              >
+                Brokoli <span class="text-neon-green">Football</span>
+              </h1>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <button
+              onclick="showEmailModal()"
+              class="hidden md:flex items-center space-x-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-neon-blue/50 transition-all group"
+            >
+              <i
+                class="fas fa-envelope text-gray-400 group-hover:text-neon-blue transition-colors"
+              ></i>
+              <span class="text-sm font-medium text-gray-300 group-hover:text-white"
+                >Subscribe</span
+              >
+            </button>
+            <!-- Mobile Menu Button -->
+            <button
+              id="mobileMenuToggle"
+              class="md:hidden text-gray-300 hover:text-white transition-colors p-2"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+          </div>
+
+          <!-- Mobile Menu -->
+          <div
+            id="mobileMenu"
+            class="hidden md:hidden absolute top-full left-0 right-0 glass border-t border-white/10 p-4 animate-slide-up"
+          >
+            <div class="space-y-4">
+              <button
+                onclick="showEmailModal()"
+                class="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white"
+              >
+                <i class="fas fa-envelope text-neon-blue"></i>
+                <span>Subscribe Email</span>
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </nav>
 
-    <div class="container mx-auto px-6 py-8">
-        <!-- Hero Section -->
-        <div class="text-center mb-8 md:mb-12 animate-fade-in px-4">
-            <h2 class="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
-                Football <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Analytics</span>
-            </h2>
-            <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Dapatkan klasemen terkini dan prediksi AI yang akurat untuk liga-liga top dunia
-            </p>
+    <!-- Main Content -->
+    <main class="relative z-10 pt-28 pb-24 container mx-auto px-4 md:px-6">
+      <!-- Hero Section -->
+      <div class="text-center mb-12 animate-fade-in relative">
+        <div
+          class="inline-block mb-4 px-3 py-1 rounded-full border border-neon-green/30 bg-neon-green/10"
+        >
+          <span class="text-xs font-bold tracking-widest text-neon-green uppercase"
+            >Season 2025</span
+          >
         </div>
+        <h2
+          class="text-4xl md:text-7xl font-bold text-white mb-6 uppercase tracking-tight leading-none"
+        >
+          Football
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue via-white to-neon-green animate-pulse-slow"
+            >Analytics</span
+          >
+          <br /><span class="text-2xl md:text-4xl font-light text-gray-400 normal-case"
+            >Redefined</span
+          >
+        </h2>
+        <p
+          class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-light mb-8"
+        >
+          Advanced AI predictions and real-time standings for the world's most competitive leagues.
+        </p>
 
         <!-- Navigation Tabs -->
-        <div class="flex justify-center mb-8 md:mb-12 animate-slide-up px-4">
-            <div class="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl p-2 border border-gray-200">
-                <button id="standingsTab" class="px-6 md:px-8 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg transition-all duration-300 text-sm md:text-base">
-                    <i class="fas fa-trophy mr-2"></i>Klasemen
-                </button>
-                <button id="predictionsTab" class="px-6 md:px-8 py-3 rounded-xl text-gray-600 hover:bg-gray-100 font-semibold transition-all duration-300 text-sm md:text-base">
-                    <i class="fas fa-crystal-ball mr-2"></i>Prediksi AI
-                </button>
-            </div>
-        </div>
-
-        <!-- Standings Section -->
-        <div id="standingsSection" class="space-y-8 animate-bounce-in">
-            <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-200 card-hover">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-list-ol text-white text-xl"></i>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-800">Klasemen Liga</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">
-                            <i class="fas fa-globe mr-2 text-primary"></i>Liga
-                        </label>
-                        <select id="leagueSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 bg-white shadow-sm">
-                            <option value="">🏆 Pilih Liga</option>
-                            <option value="39">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
-                            <option value="140">🇪🇸 Primera Division</option>
-                            <option value="78">🇩🇪 Bundesliga</option>
-                            <option value="135">🇮🇹 Serie A</option>
-                            <option value="61">🇫🇷 Ligue 1</option>
-                            <option value="2">🏆 UEFA Champions League</option>
-                            <option value="88">🇳🇱 Eredivisie</option>
-                            <option value="71">🇧🇷 Campeonato Brasileiro Série A</option>
-                            <option value="72">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship</option>
-                            <option value="94">🇵🇹 Primeira Liga</option>
-                            <option value="4">🏆 European Championship</option>
-                        </select>
-                    </div>
-                    <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">
-                            <i class="fas fa-calendar mr-2 text-primary"></i>Musim
-                        </label>
-                        <select id="seasonSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 bg-white shadow-sm">
-                            <option value="2025">📅 2025</option>
-                            <option value="2024">📅 2024</option>
-                            <option value="2023">📅 2023</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <button id="getStandings" class="w-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                    <i class="fas fa-search mr-2"></i>Lihat Klasemen
-                </button>
-            </div>
-
-            <!-- Standings Results -->
-            <div id="standingsResults" class="hidden bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
-                <div class="bg-gradient-to-r from-primary to-secondary p-6">
-                    <h3 class="text-2xl font-bold text-white flex items-center" id="leagueTitle">
-                        <i class="fas fa-trophy mr-3"></i>Klasemen Liga
-                    </h3>
-                </div>
-                <div class="overflow-x-auto -mx-4 md:mx-0">
-                    <table class="w-full min-w-[600px]">
-                        <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                            <tr>
-                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
-                                    <i class="fas fa-hashtag mr-2"></i>Pos
-                                </th>
-                                <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
-                                    <i class="fas fa-users mr-2"></i>Tim
-                                </th>
-                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
-                                    <i class="fas fa-play mr-2"></i>Main
-                                </th>
-                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
-                                    <i class="fas fa-check-circle mr-2 text-green-500"></i>Menang
-                                </th>
-                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
-                                    <i class="fas fa-minus-circle mr-2 text-yellow-500"></i>Seri
-                                </th>
-                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
-                                    <i class="fas fa-times-circle mr-2 text-red-500"></i>Kalah
-                                </th>
-                                <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">
-                                    <i class="fas fa-star mr-2 text-yellow-500"></i>Poin
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="standingsTable" class="divide-y divide-gray-200">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Predictions Section -->
-        <div id="predictionsSection" class="hidden space-y-8 animate-bounce-in">
-            <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-200 card-hover">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-gradient-to-r from-accent to-purple-600 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-brain text-white text-xl"></i>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-800">Prediksi AI</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">
-                            <i class="fas fa-globe mr-2 text-accent"></i>Liga
-                        </label>
-                        <select id="fixtureLeagueSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-accent/20 focus:border-accent transition-all duration-300 bg-white shadow-sm">
-                            <option value="">🏆 Pilih Liga</option>
-                            <option value="39">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
-                            <option value="140">🇪🇸 Primera Division</option>
-                            <option value="78">🇩🇪 Bundesliga</option>
-                            <option value="135">🇮🇹 Serie A</option>
-                            <option value="61">🇫🇷 Ligue 1</option>
-                            <option value="2">🏆 UEFA Champions League</option>
-                            <option value="88">🇳🇱 Eredivisie</option>
-                            <option value="71">🇧🇷 Campeonato Brasileiro Série A</option>
-                            <option value="72">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship</option>
-                            <option value="94">🇵🇹 Primeira Liga</option>
-                            <option value="4">🏆 European Championship</option>
-                        </select>
-                    </div>
-                    <div class="flex items-end">
-                        <button id="loadFixtures" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                            <i class="fas fa-download mr-2"></i>Muat Pertandingan
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="mb-8 space-y-2">
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">
-                        <i class="fas fa-futbol mr-2 text-accent"></i>Pilih Pertandingan
-                    </label>
-                    <select id="fixtureSelect" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-accent/20 focus:border-accent transition-all duration-300 bg-white shadow-sm" disabled>
-                        <option value="">⚽ Pilih liga terlebih dahulu</option>
-                    </select>
-                </div>
-                
-                <button id="getPredictions" class="w-full bg-gradient-to-r from-accent to-purple-600 hover:from-purple-600 hover:to-accent text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                    <i class="fas fa-robot mr-2"></i>Analisis dengan AI
-                </button>
-            </div>
-
-            <!-- Predictions Results -->
-            <div id="predictionsResults" class="hidden bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-200">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-chart-line text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800">Hasil Analisis AI</h3>
-                </div>
-                <div id="predictionsContent"></div>
-            </div>
-        </div>
-
-        <!-- Loading Spinner -->
-        <div id="loading" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-8 flex flex-col items-center space-y-4 shadow-2xl border border-gray-200">
-                <div class="relative">
-                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary/20 border-t-primary"></div>
-                    <div class="absolute inset-0 rounded-full h-12 w-12 border-4 border-transparent border-r-secondary animate-spin" style="animation-delay: -0.15s; animation-direction: reverse;"></div>
-                </div>
-                <div class="text-center">
-                    <p class="text-gray-700 font-semibold">Memuat data...</p>
-                    <p class="text-gray-500 text-sm">Mohon tunggu sebentar</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Email Modal -->
-        <div id="emailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div class="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl">
-                <div class="text-center mb-6">
-                    <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-envelope text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Notifikasi Email Harian</h3>
-                    <p class="text-gray-600">Dapatkan info pertandingan setiap hari via email</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <input type="email" id="emailInput" placeholder="Masukkan email Anda" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all duration-300">
-                    
-                    <div class="flex space-x-3">
-                        <button onclick="subscribeEmail()" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 rounded-xl font-semibold hover:from-orange-500 hover:to-yellow-500 transition-all duration-300">
-                            <i class="fas fa-check mr-2"></i>Subscribe
-                        </button>
-                        <button onclick="closeEmailModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-all duration-300">
-                            Batal
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chatbot Widget -->
-        <div id="chatWidget" class="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50">
-            <button id="chatToggle" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-purple-600 hover:to-blue-500 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-110">
-                <i class="fas fa-comments text-lg md:text-xl"></i>
+        <div class="flex justify-center animate-slide-up" style="animation-delay: 0.1s">
+          <div class="p-1.5 glass rounded-xl inline-flex space-x-2 relative">
+            <button
+              id="standingsTab"
+              class="relative z-10 px-8 py-2.5 rounded-lg text-sm font-bold uppercase tracking-wider transition-all duration-300 bg-neon-blue text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+            >
+              <i class="fas fa-list-ol mr-2"></i>Standings
             </button>
-            
-            <div id="chatBox" class="hidden absolute bottom-14 md:bottom-16 right-0 w-72 md:w-80 h-80 md:h-96 bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col">
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 md:p-4 rounded-t-2xl">
-                    <h3 class="font-bold flex items-center text-sm md:text-base">
-                        <i class="fas fa-robot mr-2"></i>
-                        <span class="hidden sm:inline">Football AI Assistant</span>
-                        <span class="sm:hidden">AI Assistant</span>
-                    </h3>
-                </div>
-                
-                <div id="chatMessages" class="flex-1 p-3 md:p-4 overflow-y-auto space-y-3">
-                    <div class="bg-gray-100 p-3 rounded-lg">
-                        <p class="text-xs md:text-sm">👋 Halo! Tanya saya tentang sepak bola, prediksi pertandingan, atau klasemen liga!</p>
-                    </div>
-                </div>
-                
-                <div class="p-3 md:p-4 border-t">
-                    <div class="flex space-x-2">
-                        <input type="text" id="chatInput" placeholder="Tanya tentang sepak bola..." class="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                        <button id="chatSend" class="bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded-lg transition-colors">
-                            <i class="fas fa-paper-plane text-sm"></i>
-                        </button>
-                    </div>
-                </div>
+            <button
+              id="predictionsTab"
+              class="relative z-10 px-8 py-2.5 rounded-lg text-sm font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-all duration-300 hover:bg-white/5"
+            >
+              <i class="fas fa-brain mr-2"></i>AI Predict
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standings Section -->
+      <div id="standingsSection" class="space-y-8 animate-slide-up" style="animation-delay: 0.2s">
+        <div class="glass-card rounded-2xl p-6 md:p-8">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div>
+              <h3 class="text-2xl font-bold text-white mb-2 flex items-center">
+                <i class="fas fa-trophy text-neon-green mr-3"></i>League Standings
+              </h3>
+              <p class="text-gray-400 text-sm">Select a league and season to view live rankings.</p>
             </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <div class="relative group w-full sm:w-64">
+                <i
+                  class="fas fa-globe absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-neon-blue transition-colors"
+                ></i>
+                <select
+                  id="leagueSelect"
+                  class="w-full bg-black/40 border border-white/10 text-white text-sm rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition-all appearance-none cursor-pointer hover:bg-black/60"
+                >
+                  <option value="" class="bg-gray-900">Select League</option>
+                  <option value="39" class="bg-gray-900">🇬🇧 Premier League</option>
+                  <option value="140" class="bg-gray-900">🇪🇸 La Liga</option>
+                  <option value="78" class="bg-gray-900">🇩🇪 Bundesliga</option>
+                  <option value="135" class="bg-gray-900">🇮🇹 Serie A</option>
+                  <option value="61" class="bg-gray-900">🇫🇷 Ligue 1</option>
+                  <option value="2" class="bg-gray-900">🇪🇺 Champions League</option>
+                  <option value="88" class="bg-gray-900">🇳🇱 Eredivisie</option>
+                  <option value="71" class="bg-gray-900">🇧🇷 Serie A</option>
+                </select>
+                <i
+                  class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 text-xs pointer-events-none"
+                ></i>
+              </div>
+
+              <div class="relative group w-full sm:w-40">
+                <i
+                  class="fas fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-neon-green transition-colors"
+                ></i>
+                <select
+                  id="seasonSelect"
+                  class="w-full bg-black/40 border border-white/10 text-white text-sm rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green transition-all appearance-none cursor-pointer hover:bg-black/60"
+                >
+                  <option value="2025" class="bg-gray-900">2025</option>
+                  <option value="2024" class="bg-gray-900">2024</option>
+                  <option value="2023" class="bg-gray-900">2023</option>
+                </select>
+                <i
+                  class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 text-xs pointer-events-none"
+                ></i>
+              </div>
+
+              <button
+                id="getStandings"
+                class="w-full sm:w-auto bg-white text-black hover:bg-neon-green hover:text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center"
+              >
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Standings Results -->
+          <div
+            id="standingsResults"
+            class="hidden overflow-hidden rounded-xl border border-white/5 bg-black/20"
+          >
+            <div class="p-4 bg-white/5 border-b border-white/5 flex items-center justify-between">
+              <h3 class="font-bold text-white flex items-center" id="leagueTitle">
+                <i class="fas fa-trophy mr-3 text-yellow-500"></i>League Table
+              </h3>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[700px]">
+                <thead
+                  class="bg-black/40 text-xs uppercase text-gray-400 font-semibold tracking-wider"
+                >
+                  <tr>
+                    <th class="px-6 py-4 text-left">Pos</th>
+                    <th class="px-6 py-4 text-left">Team</th>
+                    <th class="px-6 py-4 text-center">P</th>
+                    <th class="px-6 py-4 text-center text-neon-green">W</th>
+                    <th class="px-6 py-4 text-center text-gray-400">D</th>
+                    <th class="px-6 py-4 text-center text-neon-red">L</th>
+                    <th class="px-6 py-4 text-center text-white">Pts</th>
+                  </tr>
+                </thead>
+                <tbody id="standingsTable" class="divide-y divide-white/5 text-sm">
+                  <!-- JS Injected Rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Predictions Section -->
+      <div
+        id="predictionsSection"
+        class="hidden space-y-8 animate-slide-up"
+        style="animation-delay: 0.2s"
+      >
+        <div class="glass-card rounded-2xl p-6 md:p-8">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div>
+              <div class="flex items-center space-x-3 mb-2">
+                <div
+                  class="w-8 h-8 rounded bg-gradient-to-br from-neon-purple to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30"
+                >
+                  <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">AI Analysis</h3>
+              </div>
+              <p class="text-gray-400 text-sm">
+                Get match predictions powered by advanced algorithms.
+              </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <div class="relative group w-full sm:w-64">
+                <i
+                  class="fas fa-globe absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-neon-purple transition-colors"
+                ></i>
+                <select
+                  id="fixtureLeagueSelect"
+                  class="w-full bg-black/40 border border-white/10 text-white text-sm rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-neon-purple focus:ring-1 focus:ring-neon-purple transition-all appearance-none cursor-pointer hover:bg-black/60"
+                >
+                  <option value="" class="bg-gray-900">Select League</option>
+                  <option value="39" class="bg-gray-900">🇬🇧 Premier League</option>
+                  <option value="140" class="bg-gray-900">🇪🇸 La Liga</option>
+                  <option value="78" class="bg-gray-900">🇩🇪 Bundesliga</option>
+                  <option value="135" class="bg-gray-900">🇮🇹 Serie A</option>
+                  <option value="61" class="bg-gray-900">🇫🇷 Ligue 1</option>
+                  <option value="2" class="bg-gray-900">🇪🇺 Champions League</option>
+                </select>
+                <i
+                  class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 text-xs pointer-events-none"
+                ></i>
+              </div>
+              <button
+                id="loadFixtures"
+                class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/30 transition-all font-medium whitespace-nowrap"
+              >
+                Load Fixtures
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-8 space-y-2">
+            <label class="text-xs uppercase font-bold text-gray-500 tracking-wider"
+              >Select Match</label
+            >
+            <div class="relative">
+              <i class="fas fa-futbol absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+              <select
+                id="fixtureSelect"
+                class="w-full bg-black/40 border border-white/10 text-white p-4 pl-10 rounded-xl focus:ring-1 focus:ring-neon-purple focus:border-neon-purple transition-all appearance-none hover:bg-black/60 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled
+              >
+                <option value="">Select a league first...</option>
+              </select>
+              <i
+                class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 text-xs pointer-events-none"
+              ></i>
+            </div>
+          </div>
+
+          <button
+            id="getPredictions"
+            class="w-full bg-gradient-to-r from-neon-purple to-pink-600 hover:from-pink-600 hover:to-neon-purple text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transform hover:-translate-y-1"
+          >
+            <span class="flex items-center justify-center space-x-2">
+              <i class="fas fa-magic"></i>
+              <span>Generate AI Analysis</span>
+            </span>
+          </button>
         </div>
 
-        <!-- Error Alert -->
-        <div id="errorAlert" class="hidden fixed top-6 right-6 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 border border-red-400">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <i class="fas fa-exclamation-triangle text-white"></i>
-                </div>
-                <div>
-                    <p class="font-semibold">Error</p>
-                    <p class="text-sm opacity-90" id="errorMessage">Terjadi kesalahan</p>
-                </div>
-            </div>
+        <!-- Predictions Results -->
+        <div
+          id="predictionsResults"
+          class="hidden glass-card rounded-2xl p-6 md:p-8 border border-neon-purple/20 relative overflow-hidden"
+        >
+          <!-- Background decorative glow -->
+          <div
+            class="absolute top-0 right-0 w-64 h-64 bg-neon-purple/10 rounded-full blur-[80px] -z-10"
+          ></div>
+
+          <div id="predictionsContent" class="relative z-10"></div>
         </div>
+      </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div
+      id="loading"
+      class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[60]"
+    >
+      <div class="flex flex-col items-center">
+        <div class="relative w-20 h-20 mb-4">
+          <div class="absolute inset-0 border-t-4 border-neon-blue rounded-full animate-spin"></div>
+          <div
+            class="absolute inset-2 border-r-4 border-neon-green rounded-full animate-spin"
+            style="animation-direction: reverse"
+          ></div>
+          <div class="absolute inset-4 border-b-4 border-white rounded-full animate-pulse"></div>
+        </div>
+        <p class="text-white font-bold tracking-widest text-lg animate-pulse">ANALYZING DATA</p>
+      </div>
+    </div>
+
+    <!-- Email Modal -->
+    <div
+      id="emailModal"
+      class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[70] p-4"
+    >
+      <div class="glass-card rounded-2xl p-8 max-w-md w-full border border-white/10 relative">
+        <button
+          onclick="closeEmailModal()"
+          class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+
+        <div class="text-center mb-8">
+          <div
+            class="w-16 h-16 bg-gradient-to-tr from-neon-blue to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(59,130,246,0.4)]"
+          >
+            <i class="fas fa-envelope text-white text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-white mb-2">Daily Briefing</h3>
+          <p class="text-gray-400 text-sm">
+            Get the latest match insights delivered to your inbox every morning.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <input
+            type="email"
+            id="emailInput"
+            placeholder="Enter your email"
+            class="w-full bg-black/50 border border-white/10 text-white p-4 rounded-xl focus:ring-1 focus:ring-neon-blue focus:border-neon-blue transition-all placeholder-gray-600"
+          />
+
+          <button
+            onclick="subscribeEmail()"
+            class="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-neon-blue hover:text-white transition-all duration-300 shadow-lg"
+          >
+            Subscribe Now
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div id="chatWidget" class="fixed bottom-6 right-6 z-50">
+      <div
+        id="chatBox"
+        class="hidden absolute bottom-20 right-0 w-80 h-96 glass-card rounded-2xl border border-white/10 flex flex-col shadow-2xl overflow-hidden origin-bottom-right transition-all duration-300"
+      >
+        <div class="bg-white/5 p-4 border-b border-white/5 flex justify-between items-center">
+          <h3 class="font-bold text-white flex items-center text-sm">
+            <i class="fas fa-robot mr-2 text-neon-blue"></i>
+            AI Assistant
+          </h3>
+          <button
+            class="text-gray-400 hover:text-white"
+            onclick="document.getElementById('chatBox').classList.add('hidden')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar">
+          <div class="text-left">
+            <div
+              class="bg-white/10 text-gray-200 p-3 rounded-2xl rounded-tl-none inline-block max-w-[85%] text-sm"
+            >
+              👋 Hi! Ask me anything about stats or predictions.
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 border-t border-white/5 bg-black/20">
+          <div class="flex space-x-2">
+            <input
+              type="text"
+              id="chatInput"
+              placeholder="Type a message..."
+              class="flex-1 bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-blue"
+            />
+            <button
+              id="chatSend"
+              class="bg-neon-blue hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition-colors"
+            >
+              <i class="fas fa-paper-plane text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button
+        id="chatToggle"
+        class="w-14 h-14 rounded-full bg-gradient-to-r from-neon-blue to-purple-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:shadow-[0_0_30px_rgba(59,130,246,0.7)] flex items-center justify-center transition-all duration-300 hover:scale-110"
+      >
+        <i class="fas fa-comment-dots text-2xl"></i>
+      </button>
+    </div>
+
+    <!-- Error Toast -->
+    <div
+      id="errorAlert"
+      class="hidden fixed top-24 right-6 bg-red-500/10 backdrop-blur-md border border-red-500/50 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center space-x-4 animate-slide-up"
+    >
+      <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-exclamation text-white"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm">Error</h4>
+        <p class="text-xs text-red-200" id="errorMessage">Something went wrong</p>
+      </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white/80 backdrop-blur-md border-t border-gray-200 mt-16">
-        <div class="container mx-auto px-6 py-8">
-            <div class="text-center">
-                <div class="flex items-center justify-center space-x-3 mb-4">
-                    <div class="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
-                        <i class="fas fa-futbol text-white"></i>
-                    </div>
-                    <span class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                        Brokoli Football
-                    </span>
-                </div>
-                <p class="text-gray-600 mb-4">Professional Football Analytics Platform</p>
-                <div class="flex justify-center space-x-6 text-gray-500">
-                    <span class="flex items-center space-x-2">
-                        <i class="fas fa-shield-alt text-primary"></i>
-                        <span class="text-sm">Secure</span>
-                    </span>
-                    <span class="flex items-center space-x-2">
-                        <i class="fas fa-clock text-primary"></i>
-                        <span class="text-sm">Real-time</span>
-                    </span>
-                    <span class="flex items-center space-x-2">
-                        <i class="fas fa-brain text-primary"></i>
-                        <span class="text-sm">AI Powered</span>
-                    </span>
-                </div>
-            </div>
+    <footer class="glass border-t border-white/5 mt-auto relative z-10">
+      <div class="container mx-auto px-6 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="flex items-center space-x-2 mb-4 md:mb-0">
+            <i class="fas fa-futbol text-white"></i>
+            <span class="font-bold text-white tracking-widest text-sm">BROKOLI FOOTBALL</span>
+          </div>
+          <div class="text-gray-500 text-xs text-center md:text-right">
+            <p>&copy; 2025 Brokoli Football Analysis. All rights reserved.</p>
+          </div>
         </div>
+      </div>
     </footer>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
